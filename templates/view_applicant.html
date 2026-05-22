@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+  <div>
+    <h1>{{ applicant.Name }}</h1>
+    <p>Applicant ID: <code>{{ applicant.Applicant_ID }}</code></p>
+  </div>
+  <div style="display:flex;gap:8px;">
+    <a href="/applicants" class="btn btn-ghost">← Back</a>
+    <form method="POST" action="/delete/{{ applicant.Applicant_ID }}"
+          onsubmit="return confirm('Delete this applicant?')">
+      <button type="submit" class="btn btn-danger">Delete</button>
+    </form>
+  </div>
+</div>
+
+<!-- Personal Info -->
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-header"><h2>Personal Information</h2></div>
+  <div class="card-body">
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">Full Name</div><div class="detail-value">{{ applicant.Name }}</div></div>
+      <div class="detail-item"><div class="detail-label">Birthdate</div><div class="detail-value">{{ applicant.Birthdate }}</div></div>
+      <div class="detail-item"><div class="detail-label">Place of Birth</div><div class="detail-value">{{ applicant.Place_Birth }}</div></div>
+      <div class="detail-item"><div class="detail-label">Age</div><div class="detail-value">{{ applicant.Age }}</div></div>
+      <div class="detail-item"><div class="detail-label">Sex</div><div class="detail-value">{{ applicant.Sex }}</div></div>
+      <div class="detail-item"><div class="detail-label">Civil Status</div><div class="detail-value">{{ applicant.Civil_Status }}</div></div>
+      <div class="detail-item"><div class="detail-label">Religion</div><div class="detail-value">{{ applicant.Religion or '—' }}</div></div>
+      <div class="detail-item"><div class="detail-label">Height</div><div class="detail-value">{{ applicant.Height or '—' }} cm</div></div>
+      <div class="detail-item"><div class="detail-label">Weight</div><div class="detail-value">{{ applicant.Weight or '—' }} kg</div></div>
+      <div class="detail-item full-width"><div class="detail-label">Address</div><div class="detail-value">{{ applicant.Address }}</div></div>
+      <div class="detail-item"><div class="detail-label">Mobile</div><div class="detail-value">{{ applicant.Mobile_No }}</div></div>
+      <div class="detail-item"><div class="detail-label">Landline</div><div class="detail-value">{{ applicant.Landline_No or '—' }}</div></div>
+      <div class="detail-item"><div class="detail-label">Email</div><div class="detail-value">{{ applicant.Email_Address or '—' }}</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Employment -->
+{% if employment %}
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-header"><h2>Employment</h2></div>
+  <div class="card-body">
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value"><span class="badge badge-blue">{{ employment.Employment_Status }}</span></div></div>
+      <div class="detail-item"><div class="detail-label">Current Position</div><div class="detail-value">{{ employment.Current_Position }}</div></div>
+      <div class="detail-item"><div class="detail-label">Last Position</div><div class="detail-value">{{ employment.Position_LastEmployer or '—' }}</div></div>
+      <div class="detail-item"><div class="detail-label">Employer</div><div class="detail-value">{{ employment.Employer_Name }}</div></div>
+      <div class="detail-item"><div class="detail-label">Employer Address</div><div class="detail-value">{{ employment.Employer_Address }}</div></div>
+      <div class="detail-item"><div class="detail-label">Business Nature</div><div class="detail-value">{{ employment.Business_Nature or '—' }}</div></div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!-- Education -->
+{% if education %}
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-header"><h2>Educational Background</h2></div>
+  <div class="card-body" style="padding:0;">
+    <table>
+      <thead><tr><th>Level</th><th>School</th><th>Course / Highest Level</th><th>Year Graduated</th></tr></thead>
+      <tbody>
+        {% for e in education %}
+        <tr>
+          <td><span class="badge badge-blue">{{ e.Educ_Level }}</span></td>
+          <td>{{ e.School_Name }}</td>
+          <td>{{ e.HighestLevelComp }}</td>
+          <td>{{ e.Year_Graduated }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<!-- Training -->
+{% if trainings %}
+<div class="card" style="margin-bottom:1.5rem;">
+  <div class="card-header"><h2>Training Certificates & Skills</h2></div>
+  <div class="card-body" style="padding:0;">
+    <table>
+      <thead><tr><th>Certificate</th><th>Period</th><th>Skill</th></tr></thead>
+      <tbody>
+        {% for t in trainings %}
+        <tr>
+          <td>{{ t.Training_Cert }}</td>
+          <td>{{ t.Training_Period }}</td>
+          <td><span class="badge badge-green">{{ t.Skills }}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<!-- Languages & Credentials -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;">
+  <div class="card">
+    <div class="card-header"><h2>Languages Spoken</h2></div>
+    <div class="card-body">
+      {% if languages %}
+        {% for l in languages %}
+          <span class="badge badge-blue" style="margin:3px;">{{ l.Linguistic }}</span>
+        {% endfor %}
+      {% else %}<p style="color:var(--muted);font-size:14px;">None recorded.</p>{% endif %}
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header"><h2>Credentials / Licenses</h2></div>
+    <div class="card-body">
+      {% if credentials %}
+        {% for c in credentials %}
+          <div style="padding:6px 0;border-bottom:1px solid var(--border);font-size:14px;">{{ c.Credentials_Title }}</div>
+        {% endfor %}
+      {% else %}<p style="color:var(--muted);font-size:14px;">None recorded.</p>{% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Overseas -->
+{% if overseas %}
+<div class="card">
+  <div class="card-header"><h2>Overseas Filipino Details</h2></div>
+  <div class="card-body">
+    <div class="detail-grid">
+      <div class="detail-item"><div class="detail-label">Is OFW?</div><div class="detail-value">{{ overseas.If_OverseasFilipino }}</div></div>
+      <div class="detail-item"><div class="detail-label">Dependent</div><div class="detail-value">{{ overseas.OF_Dependent or '—' }}</div></div>
+      <div class="detail-item"><div class="detail-label">Location</div><div class="detail-value">{{ overseas.OF_Location or '—' }}</div></div>
+      <div class="detail-item"><div class="detail-label">Status</div><div class="detail-value">{{ overseas.OF_Status or '—' }}</div></div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

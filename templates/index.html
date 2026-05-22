@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <p>Public Employment Service Office — Applicant Registry</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="label">Total Applicants</div>
+    <div class="value">{{ total }}</div>
+  </div>
+  <div class="stat-card" style="border-top-color:#1a7a4a;">
+    <div class="label">Employment Groups</div>
+    <div class="value">{{ emp_stats|length }}</div>
+  </div>
+  <div class="stat-card" style="border-top-color:#1a4080;">
+    <div class="label">Recent Submissions</div>
+    <div class="value">{{ recent|length }}</div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+
+  <!-- Employment breakdown -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Employment Status Breakdown</h2>
+      <span class="badge badge-blue">Difficult Query 1</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if emp_stats %}
+      <table>
+        <thead><tr><th>Status</th><th>Count</th></tr></thead>
+        <tbody>
+          {% for row in emp_stats %}
+          <tr>
+            <td>{{ row.Employment_Status }}</td>
+            <td><span class="badge badge-green">{{ row.Total }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="no-data">No employment data yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Recent applicants -->
+  <div class="card">
+    <div class="card-header">
+      <h2>Recent Applicants</h2>
+      <a href="/apply" class="btn btn-accent btn-sm">+ New</a>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if recent %}
+      <table>
+        <thead><tr><th>ID</th><th>Name</th><th>Civil Status</th><th></th></tr></thead>
+        <tbody>
+          {% for a in recent %}
+          <tr>
+            <td><code>{{ a.Applicant_ID }}</code></td>
+            <td>{{ a.Name }}</td>
+            <td><span class="badge badge-yellow">{{ a.Civil_Status }}</span></td>
+            <td><a href="/applicant/{{ a.Applicant_ID }}" class="btn btn-ghost btn-sm">View</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="no-data">No applicants yet. <a href="/apply">Add one!</a></p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

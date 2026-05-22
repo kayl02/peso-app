@@ -1,0 +1,303 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Employment Application Form</h1>
+  <p>Public Employment Service Office — Skills Registry</p>
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <form method="POST" action="/apply">
+
+      <!-- PERSONAL INFO -->
+      <div class="form-section">
+        <div class="form-section-title">1. Personal Information</div>
+        <div class="form-grid">
+          <div class="form-group" style="grid-column:span 2;">
+            <label>Full Name <span class="required">*</span></label>
+            <input type="text" name="name" placeholder="Last, First Middle" required/>
+          </div>
+          <div class="form-group full-width">
+            <label>Complete Address <span class="required">*</span></label>
+            <input type="text" name="address" placeholder="House No., Street, Subdivision, Barangay, District" required/>
+          </div>
+          <div class="form-group">
+            <label>Birthdate <span class="required">*</span></label>
+            <input type="date" name="birthdate" required/>
+          </div>
+          <div class="form-group">
+            <label>Place of Birth <span class="required">*</span></label>
+            <input type="text" name="place_birth" required/>
+          </div>
+          <div class="form-group">
+            <label>Age <span class="required">*</span></label>
+            <input type="number" name="age" min="16" required/>
+          </div>
+          <div class="form-group">
+            <label>Sex <span class="required">*</span></label>
+            <select name="sex" required>
+              <option value="">Select</option>
+              <option value="M">Male</option>
+              <option value="F">Female</option>
+              <option value="O">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Civil Status <span class="required">*</span></label>
+            <select name="civil_status" required>
+              <option value="">Select</option>
+              <option>Single</option>
+              <option>Married</option>
+              <option>Separated</option>
+              <option>Widow</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Religion</label>
+            <input type="text" name="religion"/>
+          </div>
+          <div class="form-group">
+            <label>Height (cm)</label>
+            <input type="number" name="height" min="1"/>
+          </div>
+          <div class="form-group">
+            <label>Weight (kg)</label>
+            <input type="number" name="weight" min="1"/>
+          </div>
+          <div class="form-group">
+            <label>Mobile No. <span class="required">*</span></label>
+            <input type="text" name="mobile" placeholder="09XXXXXXXXX" required/>
+          </div>
+          <div class="form-group">
+            <label>Landline No.</label>
+            <input type="text" name="landline"/>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" name="email"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- EMPLOYMENT -->
+      <div class="form-section">
+        <div class="form-section-title">2. Employment Information</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Employment Status <span class="required">*</span></label>
+            <select name="employment_status" required>
+              <option value="">Select</option>
+              <option>Wage Employed</option>
+              <option>Self Employed</option>
+              <option>Unemployed</option>
+              <option>Finished contract</option>
+              <option>Resigned</option>
+              <option>Terminated/Laid off</option>
+              <option>Close shop</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Current Position <span class="required">*</span></label>
+            <input type="text" name="current_position" required/>
+          </div>
+          <div class="form-group">
+            <label>Position at Last Employer</label>
+            <input type="text" name="position_last"/>
+          </div>
+          <div class="form-group">
+            <label>Employer Name <span class="required">*</span></label>
+            <input type="text" name="employer_name" required/>
+          </div>
+          <div class="form-group full-width">
+            <label>Employer Address <span class="required">*</span></label>
+            <input type="text" name="employer_address" required/>
+          </div>
+          <div class="form-group">
+            <label>Nature of Business</label>
+            <input type="text" name="business_nature"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- EDUCATION -->
+      <div class="form-section">
+        <div class="form-section-title">3. Educational Background</div>
+        {% for level, key in [('Elementary','elementary'),('High School','high_school'),('College','college')] %}
+        <div style="margin-bottom:1rem;">
+          <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:8px;">{{ level }}</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>School Name</label>
+              <input type="text" name="school_{{ key }}"/>
+            </div>
+            <div class="form-group">
+              <label>Course / Highest Level Completed</label>
+              <input type="text" name="course_{{ key }}"/>
+            </div>
+            <div class="form-group">
+              <label>Year Graduated</label>
+              <input type="number" name="year_{{ key }}" min="1970" max="2099"/>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <!-- LANGUAGES -->
+      <div class="form-section">
+        <div class="form-section-title">4. Languages Spoken</div>
+        <div id="languages-container">
+          <div class="dynamic-row">
+            <div class="form-group">
+              <input type="text" name="languages" placeholder="e.g. Filipino, English, Bisaya"/>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="add-row-btn" onclick="addRow('languages-container','languages','Language')">+ Add Language</button>
+      </div>
+
+      <!-- TRAINING -->
+      <div class="form-section">
+        <div class="form-section-title">5. Training Certificates & Skills</div>
+        <div id="training-container">
+          <div class="training-block" style="border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem;">
+            <div class="form-grid" style="margin-bottom:0.75rem;">
+              <div class="form-group">
+                <label>Certificate Name</label>
+                <input type="text" name="training_cert" placeholder="e.g. NC II Bookkeeping"/>
+              </div>
+              <div class="form-group">
+                <label>Training Period</label>
+                <input type="text" name="training_period" placeholder="e.g. 6 months"/>
+              </div>
+            </div>
+            <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;">Skills Acquired</div>
+            <div class="skills-container">
+              <div class="dynamic-row">
+                <div class="form-group">
+                  <input type="text" name="training_skill" placeholder="e.g. Bookkeeping"/>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="add-row-btn" onclick="addSkillRow(this)">+ Add Skill</button>
+          </div>
+        </div>
+        <button type="button" class="add-row-btn" onclick="addTrainingBlock()">+ Add Training Certificate</button>
+      </div>
+
+      <!-- CREDENTIALS -->
+      <div class="form-section">
+        <div class="form-section-title">6. Professional Licenses / Credentials</div>
+        <div id="creds-container">
+          <div class="dynamic-row">
+            <div class="form-group"><input type="text" name="credentials" placeholder="e.g. PRC License - Nurse"/></div>
+          </div>
+        </div>
+        <button type="button" class="add-row-btn" onclick="addRow('creds-container','credentials','Credential')">+ Add Credential</button>
+      </div>
+
+      <!-- OVERSEAS FILIPINO -->
+      <div class="form-section">
+        <div class="form-section-title">7. Overseas Filipino Details</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Is Overseas Filipino Worker?</label>
+            <select name="is_overseas" onchange="toggleOF(this)">
+              <option value="No">No</option>
+              <option value="Yes">Yes</option>
+            </select>
+          </div>
+        </div>
+        <div id="of-fields" style="display:none;margin-top:1rem;">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Dependent</label>
+              <select name="of_dependent">
+                <option value="">None</option>
+                <option>Wife/Husband</option>
+                <option>Parents</option>
+                <option>Brother/Sister</option>
+                <option>Son/Daughter</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <select name="of_location">
+                <option value="">Select</option>
+                <option>Land-Based</option>
+                <option>Sea-Based</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select name="of_status">
+                <option value="">Select</option>
+                <option>Already at the jobsite</option>
+                <option>Vacation</option>
+                <option>Finished contract</option>
+                <option>Willing to go back at work</option>
+                <option>Repatriated</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBMIT -->
+      <div style="display:flex;gap:10px;justify-content:flex-end;padding-top:1rem;border-top:1px solid var(--border);">
+        <a href="/applicants" class="btn btn-ghost">Cancel</a>
+        <button type="submit" class="btn btn-accent">Submit Application</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+<script>
+function addRow(containerId, fieldName, label) {
+  const c = document.getElementById(containerId);
+  const div = document.createElement('div');
+  div.className = 'dynamic-row';
+  div.innerHTML = `<div class="form-group"><input type="text" name="${fieldName}" placeholder="${label}"/></div>
+    <button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:18px;padding:0 6px;">×</button>`;
+  c.appendChild(div);
+}
+
+function addSkillRow(btn) {
+  const container = btn.previousElementSibling;
+  const div = document.createElement('div');
+  div.className = 'dynamic-row';
+  div.innerHTML = `<div class="form-group"><input type="text" name="training_skill" placeholder="Skill"/></div>
+    <button type="button" onclick="this.parentElement.remove()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:18px;padding:0 6px;">×</button>`;
+  container.appendChild(div);
+}
+
+function addTrainingBlock() {
+  const c = document.getElementById('training-container');
+  const div = document.createElement('div');
+  div.className = 'training-block';
+  div.style = 'border:1px solid var(--border);border-radius:10px;padding:1rem;margin-bottom:1rem;';
+  div.innerHTML = `
+    <div style="display:flex;justify-content:flex-end;">
+      <button type="button" onclick="this.closest('.training-block').remove()" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:18px;">×</button>
+    </div>
+    <div class="form-grid" style="margin-bottom:0.75rem;">
+      <div class="form-group"><label>Certificate Name</label><input type="text" name="training_cert" placeholder="e.g. NC II"/></div>
+      <div class="form-group"><label>Training Period</label><input type="text" name="training_period" placeholder="e.g. 6 months"/></div>
+    </div>
+    <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;">Skills Acquired</div>
+    <div class="skills-container">
+      <div class="dynamic-row">
+        <div class="form-group"><input type="text" name="training_skill" placeholder="Skill"/></div>
+      </div>
+    </div>
+    <button type="button" class="add-row-btn" onclick="addSkillRow(this)">+ Add Skill</button>`;
+  c.appendChild(div);
+}
+
+function toggleOF(sel) {
+  document.getElementById('of-fields').style.display = sel.value === 'Yes' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

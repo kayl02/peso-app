@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header">
+  <h1>SQL Reports</h1>
+  <p>All 10 required SQL queries — Simple (3), Moderate (4), Difficult (3)</p>
+</div>
+
+<!-- ── SIMPLE QUERIES ── -->
+<div style="margin-bottom:2rem;">
+  <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Simple Queries</div>
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-header">
+      <h2>Simple 1 — SELECT all applicants</h2>
+      <span class="badge badge-blue">SELECT * FROM Applicant</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if simple1 %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Civil Status</th><th>Mobile</th><th>Email</th></tr></thead>
+          <tbody>
+            {% for r in simple1 %}
+            <tr>
+              <td><code>{{ r.Applicant_ID }}</code></td>
+              <td>{{ r.Name }}</td>
+              <td>{{ r.Civil_Status }}</td>
+              <td>{{ r.Mobile_No }}</td>
+              <td>{{ r.Email_Address or '—' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p class="no-data">No applicants yet.</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-header">
+      <h2>Simple 2 — SELECT all skills</h2>
+      <span class="badge badge-blue">SELECT * FROM Skills_Acquired</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if simple2 %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Skill Code</th><th>Skill</th></tr></thead>
+          <tbody>
+            {% for r in simple2 %}
+            <tr><td><code>{{ r.SkillCD }}</code></td><td>{{ r.Skills }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p class="no-data">No skills recorded yet.</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-header">
+      <h2>Simple 3 — DELETE (via Applicants page)</h2>
+      <span class="badge badge-red">DELETE FROM Applicant WHERE Applicant_ID = %s</span>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px;color:var(--muted);">
+        The DELETE operation is performed from the
+        <a href="/applicants">Applicants List</a> page by clicking the <strong>Delete</strong> button next to each applicant.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODERATE QUERIES ── -->
+<div style="margin-bottom:2rem;">
+  <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Moderate Queries</div>
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-header">
+      <h2>Moderate 1 — Filter by Civil Status (WHERE)</h2>
+      <form method="GET" style="display:flex;gap:8px;align-items:center;">
+        <select name="civil_status" style="padding:6px 10px;border-radius:6px;border:1px solid var(--border);font-family:'DM Sans',sans-serif;font-size:13px;">
+          {% for s in ['Single','Married','Separated','Widow'] %}
+            <option {% if s==status_filter %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary btn-sm">Filter</button>
+      </form>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if moderate1 %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>ID</th><th>Name</th><th>Civil Status</th></tr></thead>
+          <tbody>
+            {% for r in moderate1 %}
+            <tr><td><code>{{ r.Applicant_ID }}</code></td><td>{{ r.Name }}</td><td><span class="badge badge-yellow">{{ r.Civil_Status }}</span></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p class="no-data">No applicants with status: {{ status_filter }}</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-header">
+      <h2>Moderate 2 — UPDATE Employment Status (via form submit)</h2>
+      <span class="badge badge-yellow">UPDATE Employment SET Employment_Status = ... WHERE Applicant_ID = ...</span>
+    </div>
+    <div class="card-body">
+      <p style="font-size:14px;color:var(--muted);">The INSERT / UPDATE operations are triggered when submitting the <a href="/apply">Application Form</a>. Each form submission runs an INSERT for the applicant and related tables.</p>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-header">
+      <h2>Moderate 3 — Applicants + Employment + Employer (JOIN)</h2>
+      <span class="badge badge-blue">JOIN Applicant, Employment, Employer</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if moderate3 %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Employment Status</th><th>Employer</th></tr></thead>
+          <tbody>
+            {% for r in moderate3 %}
+            <tr><td>{{ r.Name }}</td><td><span class="badge badge-green">{{ r.Employment_Status }}</span></td><td>{{ r.Employer_Name }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p class="no-data">No employment data yet.</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-header">
+      <h2>Moderate 4 — Applicants & Their Languages (JOIN)</h2>
+      <span class="badge badge-blue">JOIN Applicant, Language_Spoken</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if moderate4 %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Language</th></tr></thead>
+          <tbody>
+            {% for r in moderate4 %}
+            <tr><td>{{ r.Name }}</td><td><span class="badge badge-blue">{{ r.Linguistic }}</span></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p class="no-data">No language data yet.</p>{% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- ── DIFFICULT QUERIES ── -->
+<div style="margin-bottom:2rem;">
+  <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Difficult Queries</div>
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-header">
+      <h2>Difficult 1 — Count Applicants per Employment Status (GROUP BY)</h2>
+      <span class="badge badge-red">COUNT + GROUP BY</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if difficult1 %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Employment Status</th><th>Total</th></tr></thead>
+          <tbody>
+            {% for r in difficult1 %}
+            <tr><td>{{ r.Employment_Status }}</td><td><span class="badge badge-green">{{ r.Total }}</span></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p class="no-data">No data yet.</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-header">
+      <h2>Difficult 2 — Applicants with Multiple Trainings (HAVING)</h2>
+      <span class="badge badge-red">COUNT + GROUP BY + HAVING</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if difficult2 %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Total Trainings</th></tr></thead>
+          <tbody>
+            {% for r in difficult2 %}
+            <tr><td>{{ r.Name }}</td><td><span class="badge badge-red">{{ r.Total_Trainings }}</span></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p class="no-data">No applicants with more than 1 training yet.</p>{% endif %}
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:1rem;">
+    <div class="card-header">
+      <h2>Difficult 3 — Overseas Filipinos with Dependents (Multi-condition WHERE)</h2>
+      <span class="badge badge-red">JOIN + WHERE + IS NOT NULL</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+      {% if difficult3 %}
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Name</th><th>Dependent</th><th>Location</th><th>Status</th></tr></thead>
+          <tbody>
+            {% for r in difficult3 %}
+            <tr>
+              <td>{{ r.Name }}</td>
+              <td>{{ r.OF_Dependent }}</td>
+              <td>{{ r.OF_Location }}</td>
+              <td><span class="badge badge-blue">{{ r.OF_Status }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}<p class="no-data">No overseas Filipino applicants with dependents yet.</p>{% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="page-header" style="display:flex;align-items:center;justify-content:space-between;">
+  <div>
+    <h1>All Applicants</h1>
+    <p>Moderate Query 3: Applicants with Employment & Employer (JOIN)</p>
+  </div>
+  <a href="/apply" class="btn btn-accent">+ New Application</a>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    {% if applicants %}
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Full Name</th>
+          <th>Mobile</th>
+          <th>Civil Status</th>
+          <th>Employment</th>
+          <th>Employer</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in applicants %}
+        <tr>
+          <td><code>{{ a.Applicant_ID }}</code></td>
+          <td><strong>{{ a.Name }}</strong></td>
+          <td>{{ a.Mobile_No }}</td>
+          <td><span class="badge badge-yellow">{{ a.Civil_Status }}</span></td>
+          <td>
+            {% if a.Employment_Status %}
+              {% if a.Employment_Status == 'Unemployed' %}
+                <span class="badge badge-red">{{ a.Employment_Status }}</span>
+              {% elif a.Employment_Status == 'Wage Employed' %}
+                <span class="badge badge-green">{{ a.Employment_Status }}</span>
+              {% else %}
+                <span class="badge badge-blue">{{ a.Employment_Status }}</span>
+              {% endif %}
+            {% else %}
+              <span class="badge" style="background:#f3f4f6;color:#6b7a90;">N/A</span>
+            {% endif %}
+          </td>
+          <td>{{ a.Employer_Name or '—' }}</td>
+          <td style="display:flex;gap:6px;">
+            <a href="/applicant/{{ a.Applicant_ID }}" class="btn btn-ghost btn-sm">View</a>
+            <form method="POST" action="/delete/{{ a.Applicant_ID }}"
+                  onsubmit="return confirm('Delete {{ a.Name }}?')">
+              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="no-data">No applicants found. <a href="/apply">Submit the first one!</a></p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
