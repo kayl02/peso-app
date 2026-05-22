@@ -1,15 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 import mysql.connector
 from mysql.connector import Error
+import os
 
 app = Flask(__name__)
 app.secret_key = 'peso_secret_key'
 
+import os
+
 DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '',   # <-- change this if needed
-    'database': 'peso_db'
+    'host': os.environ.get('MYSQLHOST', 'localhost'),
+    'user': os.environ.get('MYSQLUSER', 'root'),
+    'password': os.environ.get('MYSQLPASSWORD', ''),
+    'database': os.environ.get('MYSQLDATABASE', 'peso_db'),
+    'port': int(os.environ.get('MYSQLPORT', 3306))
 }
 
 def get_db():
